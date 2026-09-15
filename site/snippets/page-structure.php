@@ -6,7 +6,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $kirby->language() ? $kirby->language()->code() : 'en' ?>">
 
 <head>
     <meta charset="UTF-8">

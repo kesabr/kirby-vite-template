@@ -31,13 +31,12 @@ fieldsets:
     fieldsets:
       - text
   Media:
-    label: 
+    label:
       en: Media
       de: Medien
     type: group
     fieldsets:
       - image
-      - gallery
       - video
   # Code:
   #   label: 
