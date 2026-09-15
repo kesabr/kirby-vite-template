@@ -1,22 +1,4 @@
 title: Default
-# home: /panel/account
 
 image:
   icon: user
-
-permissions:
-  access:
-    settings: true
-    account:	true
-    panel:	true
-    users:	true
-    site:	true
-    system:	true
-    languages: true
-
-files:
-  changeName:	true
-  create:	true
-  delete:	true
-  replace:	true
-  update:	true
