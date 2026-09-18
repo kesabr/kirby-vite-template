@@ -22,7 +22,10 @@
  * @var \Kirby\Cms\File|null $file
  */
 
-$file    = $file    ?? null;
+// Type check rather than `?? null`: Kirby renders snippets through
+// F::loadIsolated(string $file, array $data), so when the caller passes no
+// `file` key, `$file` is still in scope — bound to this snippet's own path.
+$file    = ($file ?? null) instanceof \Kirby\Cms\File ? $file : null;
 $src     = $src     ?? null;   // external URL, when there is no Kirby file
 $alt     = $alt     ?? null;
 $ratio   = $ratio   ?? null;

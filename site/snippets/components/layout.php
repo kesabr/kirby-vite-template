@@ -18,7 +18,9 @@ $layouts ??= $page->layout();
     <?php $classes = kbGridClasses($layout) ?>
 
     <div class="layout__row | kb-grid">
-      <?php foreach ($layout->columns() as $index => $column) : ?>
+      <?php /* ->values() gives a 0-indexed array; iterating the collection
+               itself yields UUID keys, which would never match $classes. */ ?>
+      <?php foreach ($layout->columns()->values() as $index => $column) : ?>
 
         <div class="layout__column <?= $classes[$index] ?? 'col-1-1' ?>">
 
