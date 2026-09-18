@@ -1,0 +1,5 @@
+Title: Home
+
+----
+
+Text: <p>Welcome. This page uses the <code>home</code> template, so it also loads <code>src/templates/home.js</code> and its stylesheet.</p>

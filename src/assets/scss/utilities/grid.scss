@@ -1,4 +1,4 @@
-/* 
+/*
 How to use:
 
 * Default: full width, md: half, lg: third
@@ -12,6 +12,7 @@ How to use:
 */
 
 
+@use "sass:map";
 @use '../abstracts/breakpoints' as *;
 
 
@@ -24,7 +25,7 @@ How to use:
 
     display: grid;
     grid-template-columns: repeat(var(--_columns), 1fr);
-    
+
     row-gap: var(--_grid-block-gap);
     column-gap: var(--_grid-inline-gap);
 }
@@ -34,21 +35,25 @@ How to use:
     grid-column: span calc(var(--_columns) * var(--_width)); // Ex.: 24 * 1/8 = 3
 }
 
-/* Fractions */
+/* Fractions
+ * Quoted so Sass passes the slash through literally instead of dividing it.
+ * That keeps the deprecation warnings away and keeps the CSS math exact:
+ * `calc(24 * 1/3)` is 8, while `calc(24 * 0.3333333333)` is not.
+ *
+ * Keep in sync with KB_LAYOUT_CLASSES in site/plugins/kb-helpers/lib/kbGridClasses.php
+ */
 $fractions: (
-  "1-1":  1/1,
-  "3-4":  3/4,
-  "2-3":  2/3,
-  "1-2":  1/2,
-  "1-3":  1/3,
-  "1-4":  1/4,
-  "1-6":  1/6,
-  "1-8":  1/8,
-  "1-12": 1/12
+  "1-1":  "1/1",
+  "5-6":  "5/6",
+  "3-4":  "3/4",
+  "2-3":  "2/3",
+  "1-2":  "1/2",
+  "1-3":  "1/3",
+  "1-4":  "1/4",
+  "1-6":  "1/6",
+  "1-8":  "1/8",
+  "1-12": "1/12"
 );
-
-/* Breakpoints => Must match $breakpoints keys from abstracts/breakpoints.scss */
-$bp-keys: ( xs,sm,md,lg,xl );
 
 /* Base (mobile / default) classes */
 @each $name, $value in $fractions {
@@ -58,7 +63,8 @@ $bp-keys: ( xs,sm,md,lg,xl );
 }
 
 // Responsive variants like .col-1-2-sm, .col-1-2-md, ...
-@each $bp in $bp-keys {
+// Breakpoint keys come straight from $breakpoints — one source of truth.
+@each $bp in map.keys($breakpoints) {
   @include breakpoint($bp) {
     @each $name, $value in $fractions {
       .col-#{$name}-#{$bp} {

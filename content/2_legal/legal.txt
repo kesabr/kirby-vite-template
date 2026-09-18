@@ -1,0 +1,5 @@
+Title: Legal
+
+----
+
+Text: <h2>Imprint</h2><p>Replace this with the client's legal text.</p>

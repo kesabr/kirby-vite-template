@@ -1,10 +1,33 @@
-// @font-face {
-//     font-family: 'Farrari';
-//     src:
-//         url('/assets/fonts/farrari-beta.ttf') format("truetype"),
-//         url('/assets/fonts/farrari-beta.ttf') format("woff"),
-//         url('/assets/fonts/farrari-beta.ttf') format("woff2");
+/*
+Put font files in `src/assets/fonts/` and reference them with the `@` alias
+(configured in vite.config.js). Vite then runs them through its asset pipeline:
+they end up hashed in `public/dist/assets/` and the url() below is rewritten to
+match — nothing to copy by hand, and cache busting comes for free.
 
-//     font-weight: normal;
-//     font-style: normal;
+An absolute path like `/assets/fonts/…` is passed through untouched by Vite and
+will 404, so keep the `@/` prefix.
+
+woff2 first — the browser takes the first format it supports.
+
+Then point `--font-family-base` in `utilities/variables.scss` at the family name.
+*/
+
+// @font-face {
+//   font-family: 'YourFont';
+//   src:
+//     url('@/assets/fonts/yourfont-regular.woff2') format('woff2'),
+//     url('@/assets/fonts/yourfont-regular.woff') format('woff');
+//   font-weight: 400;
+//   font-style: normal;
+//   font-display: swap;
+// }
+
+// @font-face {
+//   font-family: 'YourFont';
+//   src:
+//     url('@/assets/fonts/yourfont-bold.woff2') format('woff2'),
+//     url('@/assets/fonts/yourfont-bold.woff') format('woff');
+//   font-weight: 600;
+//   font-style: normal;
+//   font-display: swap;
 // }

@@ -1,10 +1,18 @@
 title: Image
 
 accept:
-  extension: jpg, png, webp
+  extension: jpg, jpeg, png, webp, avif
 
 fields:
   alt:
     label: Alt Text
     type: text
+    width: 1/2
+    help:
+      en: Describes the image for screen readers. Leave empty for purely decorative images.
+      de: Beschreibt das Bild für Screenreader. Bei rein dekorativen Bildern leer lassen.
+  caption:
+    label: Caption
+    type: writer
+    inline: true
     width: 1/2

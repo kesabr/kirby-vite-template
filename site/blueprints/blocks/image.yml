@@ -18,7 +18,7 @@ fields:
     image:
       back: black
     uploads:
-      template: blocks/image
+      template: image
     when:
       location: kirby
   src:

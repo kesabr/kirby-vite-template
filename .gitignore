@@ -15,10 +15,12 @@ composer.lock
 # Frontend
 /public/assets/*
 !/public/assets/media/
+!/public/assets/css/
 /public/dist/
 
-# Content should only be handled by the live Site's panel
-/content/
+# Content is seeded here so the template boots straight after cloning.
+# Uncomment once a real project starts and the client owns the content.
+# /content/
 
 
 # Kirby

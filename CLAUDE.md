@@ -39,7 +39,7 @@ This is a **Kirby CMS 5 + Vite 5** multi-page starter using a public folder stru
 ### Vite & asset loading
 
 - `vite.config.js` uses `vite-plugin-kirby` with `src/` as root and `public/dist` as output.
-- Entry points are globbed: `src/main.js`, `src/scss/main.scss`, `src/templates/*.{js,scss}`, `src/scss/templates/*.scss`.
+- Entry points are globbed: `src/main.js` and `src/templates/*.{js,scss}`.
 - `site/config/vite.config.php` is **auto-generated** — never edit it manually.
 - In templates, `page-structure.php` automatically loads shared assets (`main.js`) and tries to load a template-specific bundle (e.g. `templates/home.js`) using `vite()->js(..., try: true)`.
 - To add a new template's JS/CSS, create `src/templates/<name>.js` (and optionally `src/assets/scss/<name>.scss` imported from it).
@@ -54,7 +54,9 @@ Every Kirby template wraps content in the shared shell:
 <?php endsnippet() ?>
 ```
 
-Available named slots: `head`, `header`, `default`, `footer`, `foot`. The shell lives in `site/snippets/page-structure.php`.
+Available named slots: `head`, `default`, `foot`. The shell lives in `site/snippets/page-structure.php`.
+
+`site/templates/default.php` is the scaffold to copy — it names the slots in a comment and fills only `default`, so there is no boilerplate to delete. `site/templates/home.php` is the worked example showing `.container` and a `.writer-field`.
 
 ### Grid system
 
@@ -67,14 +69,16 @@ The CSS grid uses `.kb-grid` (24-column) with fraction utility classes:
 
 Fractions: `1-1`, `3-4`, `2-3`, `1-2`, `1-3`, `1-4`, `1-6`, `1-8`, `1-12` — with optional breakpoint suffixes `-xs/-sm/-md/-lg/-xl`.
 
-When rendering Kirby layout fields, use `kbResponsiveClassesFromFraction($fraction)` (from `site/plugins/kb-helpers`) to convert Kirby's `"1/3"` notation to the matching responsive CSS classes. The breakpoint denominator mapping is defined in `KB_GRID_BP_MAP` and must stay in sync with `$fractions` in `src/assets/scss/utilities/grid.scss`.
+When rendering Kirby layout fields, use `kbGridClasses($layout)` (from `site/plugins/kb-helpers`), which returns one class string per column. It maps a **whole layout row** at once, not each column separately — a single fraction has no fixed responsive behaviour (`1/6` wants to be half width on a phone in a six-column row, but full width in `1/6, 2/3, 1/6`), so per-column mapping cannot keep a row adding up to 1 at every breakpoint.
+
+The table is `KB_LAYOUT_CLASSES` in `lib/kbGridClasses.php`, keyed by the column widths joined with `,` exactly as Kirby stores them (it does not reduce `2/4` to `1/2`). It must stay in sync with `layouts:` in `site/blueprints/fields/layout.yml` and `$fractions` in `src/assets/scss/utilities/grid.scss`. Adding a layout to the blueprint without adding it here stacks the columns full width and raises a notice in debug mode.
 
 ### SCSS structure (`src/assets/scss/`)
 
 - `abstracts/` — breakpoints (`$breakpoints` map), mixins, type scale
 - `base/` — reset, typography, links, font-face
 - `utilities/` — CSS variables, grid utilities, general utility classes
-- `components/` — arrows, buttons, gallery, images, writer-field
+- `components/` — images, writer-field
 - `layout/` — global defaults, header, footer shells
 - `main.scss` — barrel file that `@forward`s everything above
 - `home.scss` (and other template files) — template-specific styles, imported from `src/templates/<name>.js`
@@ -91,12 +95,34 @@ Breakpoints use `width >` (min-width equivalent). All breakpoint keys (`xs sm md
 Organized by type under `site/blueprints/`:
 - `fields/` — reusable field definitions (writer, layout, alignment, mobile-display, site-icon)
 - `pages/` — default, error, legal page schemas
-- `files/` — image, PDF, SVG with required alt/caption metadata
+- `files/` — image (alt + caption), PDF, SVG
 - `tabs/` — shared `settings` and `media` tab partials
 - `sections/` — shared panel sections (e.g. user-info)
-- `users/` — admin, editor, default role permissions
+- `users/` — default role
 
 ### Plugins
 
 - `site/plugins/kirby-vite` — Vite/Kirby integration (exposes `vite()` helper)
-- `site/plugins/kb-helpers` — project utilities; add new helpers to `lib/` and they are auto-available globally
+- `site/plugins/kb-helpers` — project utilities; `index.php` requires every file in `lib/`, so a new helper dropped there is globally available with no registration
+
+## Images
+
+All images render through `site/snippets/components/image.php`. It is the only place that knows about srcset, sizes, lazy loading and intrinsic dimensions — use it everywhere so images behave consistently:
+
+```php
+<?php snippet('components/image', [
+    'file'    => $page->image(),
+    'ratio'   => '16/9',   // optional; sets the box
+    'crop'    => true,     // true = fill the box, false = fit inside it
+    'sizes'   => '(min-width: 48rem) 50vw, 100vw',
+    'loading' => 'eager',  // for anything above the fold
+]) ?>
+```
+
+It always emits `width`/`height`, so the browser reserves space and the layout doesn't shift — no aspect-ratio CSS or JS needed. srcset widths default to `kb.image.widths` in `site/config/config.php`. SVGs and external URLs skip thumb generation.
+
+`site/snippets/blocks/image.php` handles only what is block-specific (ratio, crop, link, caption) and delegates the `<img>` to that snippet. The ratio reaches CSS as an inline `--ratio` custom property, consumed by `figure[style*="--ratio"]` in `components/images.scss`.
+
+## Fonts
+
+Font files go in `src/assets/fonts/` and are referenced from `src/assets/scss/base/font-face.scss` using the `@` alias (`url('@/assets/fonts/…')`). Vite runs them through its asset pipeline — hashed into `public/dist/assets/` with the `url()` rewritten. An absolute `/assets/fonts/…` path is passed through untouched and will 404.

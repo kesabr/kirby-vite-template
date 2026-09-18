@@ -1,11 +1,17 @@
-@use "../abstracts" as *;
-
-/** 
+/**
 
 Styling for text content inside a writer field (https://getkirby.com/docs/reference/panel/fields/writer).
 
-The `writer-fields` class is used to avoid styling these elements in other context.
-Wrap any content in this class to apply the styles.
+Wrap writer output in `.writer-field` to apply these styles. They are scoped to that
+container so the same elements stay unstyled everywhere else.
+
+Spacing is one single rule: every element gets a top margin from `--flow-space`.
+The pair rules below only retune that variable, so nothing ever fights over
+specificity and you can override any single gap inline:
+
+    <p style="--flow-space: 3em">…</p>
+
+Setting `--flow-space` on the container itself changes the default for the whole block.
 
 */
 
@@ -15,15 +21,9 @@ $space-sm: 0.7em;
 $space-md: 1.2em;
 $space-lg: 1.8em;
 $space-xl: 2.2em;
-$space-xxl: 2.8em;
 $space-2xl: 3.2em;
 
 .writer-field {
-  container-name: writer-field;
-  container-type: inline-size;
-
-  columns: auto 50ch;
-
   /* reset margins */
   > * {
     margin: 0;
@@ -32,50 +32,48 @@ $space-2xl: 3.2em;
 
   /* the stack: every next sibling gets a top margin */
   > * + * {
-    margin-block-start: var(--flow-space, $space-md);
+    margin-block-start: var(--flow-space, #{$space-md});
   }
 
-  /* specific spacing */
+  /* specific spacing — these only retune --flow-space, never the margin itself */
   :is(p, ul, ol, h2, h3, h4, h5, h6) + :is(h2) {
-    margin-block-start: $space-xl;
+    --flow-space: #{$space-xl};
   }
 
   :is(p, ul, ol, h2, h3, h4, h5, h6) + :is(h3, h4, h5, h6) {
-    margin-block-start: $space-lg;
+    --flow-space: #{$space-lg};
   }
 
   :is(h2, h3) + :is(p, ul, ol) {
-    margin-block-start: $space-md;
+    --flow-space: #{$space-md};
   }
 
   :is(h4, h5) + :is(p, ul, ol) {
-    margin-block-start: $space-sm;
+    --flow-space: #{$space-sm};
   }
 
   :is(h6) + :is(ul, ol) {
-    margin-block-start: $space-sm;
+    --flow-space: #{$space-sm};
   }
 
   :is(p, ul, ol) + :is(p, ul, ol) {
-    margin-block-start: $space-sm;
+    --flow-space: #{$space-sm};
   }
 
   :is(h2) + :is(h3) {
-    margin-block-start: 0;
+    --flow-space: 0;
   }
 
   :is(h4) + :is(h5) {
-    margin-block-start: 0;
+    --flow-space: 0;
   }
 
   :where(li) + li {
     margin-block-start: $space-2xs;
   }
 
-  /* list styles */
-  :where(ul, ol) {
-    list-style: none;
-
+  /* bullet lists get a custom round marker */
+  :where(ul) {
     li::before {
       --_circle-size: 0.7em;
       content: "";
@@ -84,22 +82,23 @@ $space-2xl: 3.2em;
       height: var(--_circle-size);
       background-color: var(--text-color);
       border-radius: 50%;
-      left: 0;
-      padding: 0;
       margin-bottom: -0.05em;
     }
 
+    /* the writer wraps list item content in <p> */
     li p {
       display: inline-block;
       margin-left: $space-xs;
     }
   }
 
+  /* ordered lists keep their numbers */
   :where(ol) {
-    font-size: var(--font-size-lg);
+    list-style: decimal;
+    padding-inline-start: 1.5em;
   }
 
-  :where(ul li)::marker {
+  :where(ol li)::marker {
     color: var(--text-color);
   }
 

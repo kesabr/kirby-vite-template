@@ -1,36 +1,29 @@
 <?php
-// 1) if they passed something, it must be an object
-if (isset($layouts) && !is_object($layouts)) {
-  throw new \InvalidArgumentException(
-    'Snippet error: $layouts was passed but is not an object (' . gettype($layouts) . ')'
-  );
-}
 
-// 2) if they didn’t pass it, try your default
-if (!isset($layouts)) {
-  $layouts = $page->layout();
-}
+/**
+ * Renders a layout field as kb-grid rows.
+ *
+ * snippet('components/layout')                        // uses $page->layout()
+ * snippet('components/layout', ['layouts' => $field]) // any layout field
+ */
 
-// 3) still not an object? hard fail
-if (!is_object($layouts)) {
-  throw new \RuntimeException(
-    'Snippet error: no valid layouts object available'
-  );
-}
+$layouts ??= $page->layout();
+
 ?>
-
 
 <div class="layout container">
 
   <?php foreach ($layouts->toLayouts() as $layout) : ?>
 
-    <div class="layout__row | kb-grid">
-      <?php foreach ($layout->columns() as $column) : ?>
+    <?php $classes = kbGridClasses($layout) ?>
 
-        <div class="layout__column <?= kbResponsiveClassesFromFraction($column->width()) ?>">
+    <div class="layout__row | kb-grid">
+      <?php foreach ($layout->columns() as $index => $column) : ?>
+
+        <div class="layout__column <?= $classes[$index] ?? 'col-1-1' ?>">
 
           <?php foreach ($column->blocks() as $block): ?>
-            <div class="block block-type-<?= $block->type() ?>">
+            <div class="block-type-<?= $block->type() ?>">
               <?= $block ?>
             </div>
           <?php endforeach ?>
@@ -39,7 +32,6 @@ if (!is_object($layouts)) {
 
       <?php endforeach ?>
     </div>
-
 
   <?php endforeach ?>
 

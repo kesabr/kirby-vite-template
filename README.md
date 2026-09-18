@@ -61,29 +61,28 @@ npm run build
 
 ## Page shell & navigation
 
-- Every template calls `snippet('page-structure', slots: true)` and fills named `slot()`s for `head`, `header`, `default`, `footer`, and `foot`, keeping markup consistent across pages (`site/templates/*.php`).
+- Every template calls `snippet('page-structure', slots: true)` and fills named `slot()`s for `head`, `default`, and `foot`, keeping markup consistent across pages (`site/templates/*.php`). Copy `templates/default.php` to start a new one.
 - The header pulls a minimal navigation component (`site/snippets/components/menu.php`) that lists all non-error pages and marks the active one.
 - Favicons are generated server-side from the `siteIcon` field through `site/snippets/parts/favicons.php`, which derives `.ico`, `.svg`, and Apple touch icons on the fly.
 
 ## Layout field & grid system
 
 - The layout field blueprint (`site/blueprints/fields/layout.yml`) defines a set of column combinations that mirror the custom grid fractions.
-- `site/snippets/components/layout.php` renders layout columns into a `.kb-grid` container and translates Kirby’s `1/2`-style widths into responsive classes through `kbResponsiveClassesFromFraction()` from the helper plugin.
+- `site/snippets/components/layout.php` renders layout columns into a `.kb-grid` container, getting one class string per column from `kbGridClasses()` in the helper plugin.
+- That helper maps a whole layout row at once rather than each column on its own, so every row still adds up to full width at every breakpoint. The table lives in `KB_LAYOUT_CLASSES` and mirrors the `layouts:` list in `site/blueprints/fields/layout.yml`.
 - The grid itself is defined in `src/assets/scss/utilities/grid.scss`: 24-column base with fraction utilities (`col-1-2`, `col-1-3-lg`, etc.) generated for all breakpoints from `abstracts/breakpoints.scss`.
-- Legacy grid helpers remain in `src/assets/scss/utilities/old-grid.scss` if you need the previous `column-*` API.
 
 ## Blocks & content components
 
-- Text blocks reuse the custom writer field (`site/blueprints/fields/writer.yml`) with a slim toolbar; frontend typography for writer output is styled via `.writer-fields` in `src/assets/scss/components/writer-field.scss`.
-- Image blocks (`site/blueprints/blocks/image.yml` + `site/snippets/blocks/image.php`) support internal/external sources, optional ratios/cropping, links, captions, and set `aspect-ratio` on the rendered `<figure>`.
-- A Glide-ready gallery renderer lives in `site/snippets/blocks/gallery.php` with matching styles in `src/assets/scss/components/gallery.scss`; it applies a configurable ratio and includes arrow/bullet controls that hook into Glide’s classes.
-- Utility arrows (`src/assets/scss/components/arrows.scss`) power the arrow spans referenced in templates and the gallery navigation.
+- Text blocks reuse the custom writer field (`site/blueprints/fields/writer.yml`) with a slim toolbar; frontend typography for writer output is styled via `.writer-field` in `src/assets/scss/components/writer-field.scss`. Spacing runs on a single `--flow-space` variable, so any individual gap can be overridden inline.
+- Every image on the site renders through `site/snippets/components/image.php` — srcset, sizes, lazy loading and intrinsic `width`/`height` in one place. Use it for plain image fields as well as blocks.
+- Image blocks (`site/blueprints/blocks/image.yml` + `site/snippets/blocks/image.php`) add only what is block-specific: internal/external sources, optional ratio and cropping, links and captions. The ratio reaches CSS as an inline `--ratio` custom property.
 
 ## Blueprint structure & panel tweaks
 
 - Blueprints are organized by type (`site/blueprints/{pages,files,fields,sections,tabs,users}`) to encourage reuse: e.g. `fields/alignment.yml`, `fields/mobile-display.yml`, and `fields/site-icon.yml`.
 - Default pages (`site/blueprints/pages/default.yml`) expose a writer field; legal/error pages have tailored presets; the site blueprint separates main pages from “background” pages via tabs and uses the shared `settings`/`media` tab partials.
-- File blueprints for images/PDFs enforce alt/caption metadata. User roles (`site/blueprints/users/*.yml`) set granular panel permissions and share the `sections/user-info.yml` fields.
+- File blueprints for images/PDFs carry alt and caption metadata.
 - Panel appearance is customized through `public/assets/css/custom-panel.css`, registered in `site/config/config.php`.
 - Environment-specific config is split (`site/config/config.php` vs `site/config/config.localhost.php`) so debug mode stays local.
 
@@ -92,12 +91,13 @@ npm run build
 - SCSS is structured under `src/assets/scss/`:
   - `abstracts/` for breakpoints, mixins, and type scales.
   - `utilities/` for CSS variables, spacing helpers, grid utilities, and generic utility classes.
-  - `components/` for arrows, buttons, images, writer content, and gallery styling.
+  - `components/` for images and writer content.
   - `layout/` for global defaults plus header/footer shells; `base/` for resets, typography, and link styles.
 - Shared styles compile from `src/assets/scss/main.scss`; template-specific overrides live next to each entry (e.g. `src/templates/home.js` loads `src/assets/scss/home.scss`).
+- Fonts go in `src/assets/fonts/` and are referenced from `base/font-face.scss` with the `@` alias, so Vite hashes them into `public/dist/assets/` automatically.
 
 ## Helper plugin
 
-- `site/plugins/kb-helpers` registers shared PHP utilities; currently it exposes `kbResponsiveClassesFromFraction()` (`lib/kbResponsiveClassesFromFraction.php`) to keep Kirby layout widths aligned with the SCSS grid.
-- Add more shared helpers to the `lib/` folder and import them where needed; they are available globally once the plugin loads.
+- `site/plugins/kb-helpers` registers shared PHP utilities; currently it exposes `kbGridClasses()` (`lib/kbGridClasses.php`) to keep Kirby layout widths aligned with the SCSS grid.
+- Every file in `lib/` is required automatically, so a new helper dropped there is globally available with no registration step.
 

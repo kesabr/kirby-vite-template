@@ -7,5 +7,8 @@ Kirby::plugin('kesabr/kb-helpers', [
     // Plugin options and extensions can be defined here
 ]);
 
-// Include additional PHP files
-require_once __DIR__ . '/lib/kbResponsiveClassesFromFraction.php';
+// Every PHP file in lib/ is loaded automatically — drop a new helper in there and
+// it is globally available, no registration needed.
+foreach (glob(__DIR__ . '/lib/*.php') as $helper) {
+    require_once $helper;
+}

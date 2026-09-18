@@ -1,5 +1,9 @@
-@use 'abstracts' as *;
+/*
+Styles that only the `home` template needs.
 
-body {
-    background-color: bisque;
-}
+Loaded via `src/templates/home.js`, which `page-structure.php` picks up
+automatically for any page using this template. Create `src/templates/<name>.js`
+and a matching stylesheet to do the same for another template.
+*/
+
+@use 'abstracts' as *;

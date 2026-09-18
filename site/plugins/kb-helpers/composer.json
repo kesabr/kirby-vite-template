@@ -1,5 +1,5 @@
 {
-    "name": "kesabr/custom-functions",
+    "name": "kesabr/kb-helpers",
     "description": "A Kirby plugin to provide globally accessible custom functions.",
     "version": "1.0.0",
     "type": "kirby-plugin",

@@ -10,19 +10,24 @@ figcaption {
     @include font-style(infotext);
 }
 
-/* Image Blocks */
-figure.block-type-image {
-    width: 100%;
+/* Figures with a ratio set by the image block.
+ * The ratio comes from the server as an inline --ratio custom property, so there
+ * is nothing to compute in the browser. `crop` decides whether the image fills
+ * the box or fits inside it.
+ */
+figure[style*="--ratio"] {
+    aspect-ratio: var(--ratio);
 
     img {
-        max-width: 100%;
+        width: 100%;
+        height: 100%;
     }
-    
-    &[data-ratio] {
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+
+    &[data-crop="true"] img {
+        object-fit: cover;
+    }
+
+    &[data-crop="false"] img {
+        object-fit: contain;
     }
 }

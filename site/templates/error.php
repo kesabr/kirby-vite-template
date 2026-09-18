@@ -6,12 +6,12 @@ snippet('page-structure', slots: true)
 <?php slot('default') ?>
 
 <div class="container">
-    <div class="text m-bottom-md">
+    <div class="m-bottom-md writer-field">
         <?= $page->text() ?>
     </div>
 
-    <a class="button" href="/">
-        <span class="arrow" data-direction="left"></span> Back to Home
+    <a class="link" href="/">
+        ← Back to Home
     </a>
 </div>
 

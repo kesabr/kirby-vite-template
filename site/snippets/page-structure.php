@@ -32,10 +32,6 @@
 
     <header>
         <?= snippet('parts/header') ?>
-
-        <?php if ($header = $slots->header()) : ?>
-            <?= $header ?>
-        <?php endif ?>
     </header>
 
     <main>
@@ -46,9 +42,6 @@
 
     <footer>
         <?= snippet('parts/footer') ?>
-        <?php if ($footer = $slots->footer()) : ?>
-            <?= $footer ?>
-        <?php endif ?>
     </footer>
 
     <?php if ($foot = $slots->foot()) : ?>

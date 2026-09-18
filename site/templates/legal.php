@@ -7,7 +7,7 @@ snippet('page-structure', slots: true)
 
 <div class="legal container">
 
-    <div class="m-bottom-md writer-fields">
+    <div class="m-bottom-md writer-field">
         <?= $page->text() ?>
     </div>
 

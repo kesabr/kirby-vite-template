@@ -3,11 +3,9 @@ import { resolve } from "path";
 import kirby from "vite-plugin-kirby";
 
 const input = globSync([
-  
-  "src/main.js", 
-  "src/scss/main.scss", 
-  "src/templates/*.{js,scss}", 
-  "src/scss/templates/*.scss"
+
+  "src/main.js",
+  "src/templates/*.{js,scss}"
 
 ]).map(
   (path) => resolve(process.cwd(), path)

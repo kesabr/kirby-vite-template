@@ -1,0 +1,5 @@
+/* Panel customisations. Registered in site/config/config.php under `panel.css`. */
+
+:root {
+  /* --color-focus: var(--color-blue-600); */
+}

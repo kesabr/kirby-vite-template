@@ -6,7 +6,11 @@ snippet('page-structure', slots: true)
 <?php slot('default') ?>
 
 <div class="container">
-    <h1><?= $page->title() ?></h1>
+    <h1 class="m-bottom-md"><?= $page->title() ?></h1>
+
+    <div class="writer-field">
+        <?= $page->text() ?>
+    </div>
 </div>
 
 <?php endslot() ?>
